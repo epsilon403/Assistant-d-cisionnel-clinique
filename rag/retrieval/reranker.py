@@ -17,14 +17,7 @@ from langchain.retrievers.document_compressors import FlashrankRerank
 import os
 
 def get_reranked_retriever(base_retriever, top_n=3):
-    """
-    Wraps a base retriever with a Reranking layer to improve precision.
-    - model_name: Defaults to 'ms-marco-MiniLM-L-6-v2' (lightweight & fast)
-    - top_n: Number of chunks to keep after re-ordering
-    """
-    
-    # Initialize the Reranker (Cross-Encoder)
-    # This addresses the 're-ranking' requirement in your LLMOps section [cite: 54]
+  
     compressor = FlashrankRerank(model="ms-marco-MiniLM-L-6-v2", top_n=top_n)
     
     # Create the Contextual Compression Retriever
