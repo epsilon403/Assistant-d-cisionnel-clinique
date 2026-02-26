@@ -1,9 +1,20 @@
 # ============================================================
 # session.py - Configuration de la session SQLAlchemy
 # ============================================================
-# Responsabilités:
-#   - Créer l'engine SQLAlchemy (async) avec DATABASE_URL
-#   - Configurer le SessionLocal (AsyncSession)
-#   - Fournir un context manager pour les sessions DB
-#   - Gérer le pool de connexions
-# ============================================================
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from backend.config import get_settings
+
+settings = get_settings()
+
+engine = create_engine(settings.DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+def get_db():
+    """Dependency: yield a DB session per request."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
