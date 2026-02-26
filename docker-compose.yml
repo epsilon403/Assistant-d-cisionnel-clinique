@@ -1,0 +1,46 @@
+services:
+  # Database Service [cite: 38]
+  db:
+    image: postgres:15
+    container_name: cliniq_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cliniq
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Backend Service [cite: 29]
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: cliniq_backend
+    env_file: .env
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/cliniq
+    depends_on:
+      - db
+
+  # Frontend Service
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: cliniq_frontend
+    volumes:
+      - .:/app
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
