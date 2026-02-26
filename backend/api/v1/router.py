@@ -1,8 +1,8 @@
 # ============================================================
 # router.py - Routeur principal API v1
 # ============================================================
-# Responsabilités:
-#   - Agréger tous les sous-routeurs (auth, users, query)
-#   - Préfixer les routes avec /api/v1
-#   - Appliquer les tags pour la documentation Swagger/OpenAPI
-# ============================================================
+from fastapi import APIRouter
+from backend.api.v1.endpoints import query
+
+api_router = APIRouter()
+api_router.include_router(query.router, prefix="/query", tags=["query"])
