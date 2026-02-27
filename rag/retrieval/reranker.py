@@ -13,15 +13,14 @@
 #   - Filtrer les chunks non pertinents (score < seuil)
 # ============================================================
 from langchain.retrievers import ContextualCompressionRetriever
-from langchain.retrievers.document_compressors import FlashrankRerank
+from langchain_community.document_compressors import FlashrankRerank
 import os
 
 def get_reranked_retriever(base_retriever, top_n=3):
   
     compressor = FlashrankRerank(model="ms-marco-MiniLM-L-6-v2", top_n=top_n)
     
-    # Create the Contextual Compression Retriever
-    # This filters irrelevant chunks by re-scoring them [cite: 20, 21]
+   
     compression_retriever = ContextualCompressionRetriever(
         base_compressor=compressor, 
         base_retriever=base_retriever
