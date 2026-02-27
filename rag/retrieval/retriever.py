@@ -17,11 +17,12 @@
 from langchain.retrievers import EnsembleRetriever, ContextualCompressionRetriever
 from langchain.retrievers.multi_query import MultiQueryRetriever
 from langchain_community.retrievers import BM25Retriever
-from langchain.retrievers.document_compressors import FlashrankRerank
-from langchain_openai import ChatOpenAI # or your choice of LLM
-from rag.embeddings.vector_store import load_vector_store
+from langchain_community.document_compressors import FlashrankRerank
+from langchain_google_genai import ChatGoogleGenerativeAI
+from rag.embeddings.store import load_vector_store
+import os
 
-def get_hybrid_retriever(documents):
+def get_hybrid_retriever(documents=None):
    
     # 1. Setup Vector Retriever (Semantic)
     vector_db = load_vector_store()
@@ -30,6 +31,17 @@ def get_hybrid_retriever(documents):
         search_kwargs={'k': 6, 'fetch_k': 20}
     )
 
+    # If no documents passed, load them from the vector store for BM25
+    if documents is None:
+        stored = vector_db.get()
+        if not stored['documents']:
+            raise ValueError("Vector store is empty. Please ingest documents first via POST /api/v1/query/document")
+        # Convert to Document objects for BM25
+        from langchain_core.documents import Document
+        documents = [
+            Document(page_content=text, metadata=(meta or {}))
+            for text, meta in zip(stored['documents'], stored['metadatas'])
+        ]
 
     bm25_retriever = BM25Retriever.from_documents(documents)
     bm25_retriever.k = 6
@@ -41,7 +53,7 @@ def get_hybrid_retriever(documents):
     )
 
 
-    llm = ChatOpenAI(temperature=0) 
+    llm = ChatGoogleGenerativeAI(model=os.getenv("LLM_MODEL", "gemini-2.0-flash"), temperature=0)
     mq_retriever = MultiQueryRetriever.from_llm(
         retriever=ensemble_retriever, 
         llm=llm
