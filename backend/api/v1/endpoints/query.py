@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 from backend.db.session import get_db
 from backend.models.query import Query
 from backend.api.v1.schemas.query import QueryCreate, QueryResponse
+from rag.pipeline import RAGPipeline
 
 router = APIRouter()
 
@@ -45,3 +46,10 @@ def get_query_history(db: Session = Depends(get_db)):
     queries = db.query(Query).order_by(Query.created_at.desc()).all()
     return queries
     return queries
+
+@router.post("/document")
+
+def ingest_medical_document(file_path: str = "data/raw/Guide-des-Protocoles.pdf", db: Session = Depends(get_db)):
+    pipeline = RAGPipeline()
+    result = pipeline.ingest(file_path)
+    return {"message": result}
