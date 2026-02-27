@@ -7,10 +7,18 @@ from backend.config import get_settings
 from backend.db.base import Base
 from backend.db.session import engine
 from backend.api.v1.router import api_router
+import mlflow
+import os
 
 # Import models so they register with Base.metadata
 import backend.models.user  # noqa
 import backend.models.query  # noqa
+
+
+mlflow.set_experiment("medical_rag_experiment")
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000"))
+mlflow.langchain.autolog()
+
 
 settings = get_settings()
 
@@ -33,6 +41,9 @@ def on_startup():
 app.include_router(api_router, prefix="/api/v1")
 
 
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
