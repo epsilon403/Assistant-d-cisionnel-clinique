@@ -14,7 +14,7 @@
 #   - Attacher les métadonnées à chaque chunk (voir metadata.py)
 # ============================================================
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 def chunk_medical_documents(documents, chunk_size=1000, chunk_overlap=200):
     """
