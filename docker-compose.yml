@@ -1,5 +1,5 @@
 services:
-  # Database Service [cite: 38]
+
   db:
     image: postgres:15
     container_name: cliniq_db
@@ -13,11 +13,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # Backend Service [cite: 29]
+
   backend:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile
     container_name: cliniq_backend
     env_file: .env
     volumes:
@@ -29,7 +29,19 @@ services:
     depends_on:
       - db
 
-  # Frontend Service
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile # Reuses your existing Python image!
+    container_name: cliniq_mlflow
+    restart: always
+    # Starts the MLflow UI and saves data to your existing PostgreSQL DB
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri postgresql://user:password@db:5432/cliniq
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      
   frontend:
     build:
       context: .
