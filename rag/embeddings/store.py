@@ -19,23 +19,27 @@
 #       * distance_metric: cosine, L2, inner_product
 # ============================================================
 
-from Langchartin_community.vectorestores import Chroma
+from langchain_community.vectorstores import Chroma
 import os
 from rag.embeddings.model import get_embedding_model
 VECTOR_DB_DIR = "data/vectorstore"
 
 def create_vector_store(chunks):
-    embadding = get_embedding_model()
-    vectore_store = Chroma(
-        documents = chunks,
-        embadding = embadding,
-        collection_name = "medical_docs",
-        presist_directory = VECTOR_DB_DIR
+    embedding = get_embedding_model()
+    vector_store = Chroma.from_documents(
+        documents=chunks,
+        embedding=embedding,
+        collection_name="medical_docs",
+        persist_directory=VECTOR_DB_DIR
     )
-    print(f"cextor store created with {len(chunks)} chunks")
-    return vectore_store
+    print(f"Vector store created with {len(chunks)} chunks")
+    return vector_store
 
 def load_vector_store():
   
     embeddings = get_embedding_model()
-    return Chroma(persist_directory=VECTOR_DB_DIR, embedding_function=embeddings)
+    return Chroma(
+        persist_directory=VECTOR_DB_DIR,
+        collection_name="medical_docs",
+        embedding_function=embeddings
+    )
