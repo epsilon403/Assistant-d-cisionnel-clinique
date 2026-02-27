@@ -12,9 +12,9 @@
 #   - Fournir une interface unifiée pour générer des embeddings
 #   - Supporter le batch embedding pour l'ingestion
 # ============================================================
-from langchain_community.embeddings import HugginFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 import os
 
 def get_embedding_model():
-    embedding_model = HugginFaceEmbeddings(model_name=os.getenv('EMBEDDING_MODEL' , 'sentence-transformsers/all-MiniLLM-L6-v2'))
+    embedding_model = HuggingFaceEmbeddings(model_name=os.getenv('EMBEDDING_MODEL', 'sentence-transformers/all-MiniLM-L6-v2'))
     return embedding_model
