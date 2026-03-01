@@ -12,7 +12,9 @@
 # ============================================================
 from langchain_community.document_loaders import PyPDFLoader
 import os
+import mlflow
 
+@mlflow.trace
 def load_medical_document(file_path: str):
     """
     Loads a PDF document and returns a list of LangChain Document objects.

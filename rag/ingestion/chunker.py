@@ -15,7 +15,9 @@
 # ============================================================
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+import mlflow
 
+@mlflow.trace
 def chunk_medical_documents(documents, chunk_size=1000, chunk_overlap=200):
     """
     Splits documents into smaller chunks while preserving medical context.
