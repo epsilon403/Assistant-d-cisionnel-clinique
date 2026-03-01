@@ -15,9 +15,15 @@ import backend.models.user  # noqa
 import backend.models.query  # noqa
 
 
+tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000")
+os.environ["MLFLOW_TRACKING_URI"] = tracking_uri
+
+mlflow.set_tracking_uri(tracking_uri)
 mlflow.set_experiment("medical_rag_experiment")
-mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000"))
-mlflow.langchain.autolog()
+mlflow.langchain.autolog(
+    log_traces=True,
+    
+)
 
 
 settings = get_settings()
