@@ -29,3 +29,4 @@ python-dotenv>=1.0.0
 rank_bm25
 langchain-ollama
 pyjwt
+passlib

@@ -22,12 +22,14 @@ router = APIRouter()
 
 class UserCreate(BaseModel):
     username: str
+    email: str
     password: str
 
 
 class UserResponse(BaseModel):
     id: int
     username: str
+    email: str | None = None
 
     class Config:
         orm_mode = True
@@ -76,7 +78,12 @@ def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
         )
 
     hashed_password = get_password_hash(user_in.password)
-    new_user = User(username=user_in.username, hashed_password=hashed_password)
+    new_user = User(
+        username=user_in.username,
+        email=user_in.email,
+        hashed_password=hashed_password,
+        role="médecin",
+    )
 
     db.add(new_user)
     db.commit()

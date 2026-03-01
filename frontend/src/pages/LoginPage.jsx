@@ -2,11 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginRequest, registerRequest, fetchMe } from "../api/client";
-import { FiUser, FiLock } from "react-icons/fi";
+import { FiUser, FiLock, FiMail } from "react-icons/fi";
 
 export default function LoginPage() {
     const [tab, setTab] = useState("login");
     const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -38,10 +39,11 @@ export default function LoginPage() {
         setSuccess("");
         setBusy(true);
         try {
-            await registerRequest(username, password);
-            setSuccess("Account created! You can now log in.");
+            await registerRequest(username, email, password);
+            setSuccess("Compte créé ! Vous pouvez maintenant vous connecter.");
             setTab("login");
             setPassword("");
+            setEmail("");
         } catch (err) {
             const msg = err.response?.data?.detail || "Registration failed.";
             setError(msg);
@@ -105,6 +107,22 @@ export default function LoginPage() {
                             autoComplete="username"
                         />
                     </div>
+
+                    {tab === "register" && (
+                        <div className="input-group">
+                            <label htmlFor="email">Email</label>
+                            <FiMail className="input-icon" />
+                            <input
+                                id="email"
+                                type="email"
+                                placeholder="docteur@cliniq.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                autoComplete="email"
+                            />
+                        </div>
+                    )}
 
                     <div className="input-group">
                         <label htmlFor="password">Mot de passe</label>
