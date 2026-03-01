@@ -1,4 +1,0 @@
-# Frontend dependencies
-streamlit
-requests
-streamlit-extras

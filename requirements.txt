@@ -28,3 +28,4 @@ prometheus-client>=0.17.0
 python-dotenv>=1.0.0
 rank_bm25
 langchain-ollama
+pyjwt

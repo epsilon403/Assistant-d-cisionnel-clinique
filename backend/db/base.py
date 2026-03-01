@@ -1,6 +1,3 @@
-# ============================================================
-# base.py - Classe de base SQLAlchemy
-# ============================================================
 from sqlalchemy.orm import DeclarativeBase
 
 

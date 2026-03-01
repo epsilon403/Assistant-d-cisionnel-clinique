@@ -1,6 +1,3 @@
-# ============================================================
-# query.py - Schémas Pydantic pour les requêtes RAG
-# ============================================================
 from pydantic import BaseModel
 from datetime import datetime
 

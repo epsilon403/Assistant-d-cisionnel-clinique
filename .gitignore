@@ -1,0 +1,10 @@
+.env
+.env.local
+__pycache__/
+*.pyc
+.pytest_cache/
+.deepeval/
+mlflow.db
+data/vectorstore/
+node_modules/
+dist/

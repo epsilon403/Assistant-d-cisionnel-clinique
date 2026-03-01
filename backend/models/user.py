@@ -1,19 +1,7 @@
-# ============================================================
-# user.py - Modèle SQLAlchemy User
-# ============================================================
-# Table: users
-# Colonnes:
-#   - id: Integer, Primary Key, auto-increment
-#   - username: String, unique, not null
-#   - email: String, unique, not null
-#   - hashed_password: String, not null
-#   - role: String, not null (ex: "admin", "médecin")
-#   - created_at: DateTime, default=now
-#   - updated_at: DateTime, onupdate=now
-# ============================================================
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
 from sqlalchemy.sql import func
-from backend.db.base import Base 
+from backend.db.base import Base
+
 
 class User(Base):
     __tablename__ = "users"

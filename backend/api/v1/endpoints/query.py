@@ -1,26 +1,22 @@
-# ============================================================
-# query.py - Endpoints de requêtes RAG
-# ============================================================
-# Responsabilités:
-#   - POST /query/     : Soumettre une question au pipeline RAG
-#                        → Reçoit la query, exécute le pipeline RAG,
-#                          retourne la réponse générée avec les sources
-#                        → Sauvegarde la query et la réponse en DB
-#   - GET  /query/     : Lister l'historique des requêtes de l'utilisateur
-#   - GET  /query/{id} : Récupérer une requête spécifique avec sa réponse
-# ============================================================
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from backend.db.session import get_db
 from backend.models.query import Query
 from backend.api.v1.schemas.query import QueryCreate, QueryResponse
 from rag.pipeline import RAGPipeline
+from backend.api.v1.endpoints.auth import get_current_user
+from backend.models.user import User
 
 router = APIRouter()
 
 
 @router.post("/ask", response_model=QueryResponse)
-def ask_medical_assistant(payload: QueryCreate, db: Session = Depends(get_db)):
+def ask_medical_assistant(
+    payload: QueryCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Send a medical question through the RAG pipeline and store the result."""
     try:
         from rag.generation.chain import create_medical_rag_chain
         from rag.retrieval.retriever import get_hybrid_retriever
@@ -43,13 +39,16 @@ def ask_medical_assistant(payload: QueryCreate, db: Session = Depends(get_db)):
 
 @router.get("/history", response_model=list[QueryResponse])
 def get_query_history(db: Session = Depends(get_db)):
-    queries = db.query(Query).order_by(Query.created_at.desc()).all()
-    return queries
-    return queries
+    """Return all past queries ordered by most recent first."""
+    return db.query(Query).order_by(Query.created_at.desc()).all()
+
 
 @router.post("/document")
-
-def ingest_medical_document(file_path: str = "data/raw/Guide-des-Protocoles.pdf", db: Session = Depends(get_db)):
+def ingest_medical_document(
+    file_path: str = "data/raw/Guide-des-Protocoles.pdf",
+    db: Session = Depends(get_db),
+):
+    """Ingest a medical PDF into the vector store."""
     pipeline = RAGPipeline()
     result = pipeline.ingest(file_path)
     return {"message": result}

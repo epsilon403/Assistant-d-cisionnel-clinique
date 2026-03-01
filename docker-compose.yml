@@ -25,14 +25,14 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://user:password@db:5432/cliniq
-      - MLFLOW_TRACKING_URI=http://mlflow:5000 # <-- Add this line
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
     depends_on:
       - db
 
   mlflow:
     build:
       context: .
-      dockerfile: Dockerfile # Reuses your existing Python image!
+      dockerfile: Dockerfile
     hostname: mlflow
     container_name: cliniq_mlflow
     restart: always
@@ -49,10 +49,8 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
     container_name: cliniq_frontend
-    volumes:
-      - .:/app
     ports:
-      - "8501:8501"
+      - "3000:80"
     depends_on:
       - backend
 

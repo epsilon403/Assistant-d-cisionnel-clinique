@@ -1,6 +1,3 @@
-# ============================================================
-# main.py - Point d'entrée FastAPI
-# ============================================================
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.config import get_settings
@@ -10,7 +7,7 @@ from backend.api.v1.router import api_router
 import mlflow
 import os
 
-# Import models so they register with Base.metadata
+# Register models so SQLAlchemy picks them up
 import backend.models.user  # noqa
 import backend.models.query  # noqa
 
@@ -20,10 +17,7 @@ os.environ["MLFLOW_TRACKING_URI"] = tracking_uri
 
 mlflow.set_tracking_uri(tracking_uri)
 mlflow.set_experiment("medical_rag_experiment")
-mlflow.langchain.autolog(
-    log_traces=True,
-    
-)
+mlflow.langchain.autolog(log_traces=True)
 
 
 settings = get_settings()
@@ -47,9 +41,6 @@ def on_startup():
 app.include_router(api_router, prefix="/api/v1")
 
 
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
-
-
