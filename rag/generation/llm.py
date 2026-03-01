@@ -16,29 +16,32 @@
 # ============================================================
 
 import os
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 from pydantic_settings import BaseSettings
 
 class LLMConfig(BaseSettings):
-
-    model_name: str = "gemini-2.0-flash"
-    temperature: float = 0.0 # Strict accuracy for clinical decisions [cite: 5, 55]
+    model_name: str = "llama3.1"
+    temperature: float = 0.0 
     max_tokens: int = 1000
     top_p: float = 0.95
     top_k: int = 40
+    ollama_base_url: str = "http://host.docker.internal:11434"
 
     class Config:
         env_file = ".env"
         extra = "ignore"
 
+import mlflow
+
+@mlflow.trace
 def get_llm():
-    """Initialise le LLM avec les hyperparamètres du projet."""
+    """Initialise le LLM local avec les hyperparamètres du projet."""
     config = LLMConfig()
-    return ChatGoogleGenerativeAI(
+    
+    return ChatOllama(
+        base_url=config.ollama_base_url,
         model=config.model_name,
         temperature=config.temperature,
-        max_output_tokens=config.max_tokens,
-        top_p=config.top_p,
+        num_predict=config.max_tokens,
         top_k=config.top_k,
-        google_api_key=os.getenv("GOOGLE_API_KEY")
     )

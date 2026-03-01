@@ -20,7 +20,9 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from rag.generation.llm import get_llm
 from rag.generation.prompts import RAG_USER_PROMPT
+import mlflow
 
+@mlflow.trace
 def create_medical_rag_chain(retriever):
     
     """
