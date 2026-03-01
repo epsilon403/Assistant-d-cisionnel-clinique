@@ -14,7 +14,9 @@
 # ============================================================
 from langchain_community.embeddings import HuggingFaceEmbeddings
 import os
+import mlflow
 
+@mlflow.trace
 def get_embedding_model():
     embedding_model = HuggingFaceEmbeddings(model_name=os.getenv('EMBEDDING_MODEL', 'sentence-transformers/all-MiniLM-L6-v2'))
     return embedding_model
