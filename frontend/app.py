@@ -15,9 +15,30 @@ st.set_page_config(
 st.title("🏥 CliniQ - Assistant Décisionnel Clinique")
 st.markdown("Posez vos questions médicales et obtenez des réponses basées sur les protocoles cliniques.")
 
-# Chat history
+# Fetch history from backend
+def fetch_history():
+    try:
+        response = requests.get(f"{BACKEND_URL}/api/v1/query/history", timeout=10)
+        if response.status_code == 200:
+            return response.json()
+        return []
+    except requests.exceptions.RequestException as e:
+        st.warning(f"Impossible de charger l'historique: {e}")
+        return []
+
+# Initialize Chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
+    
+    # Load past messages from the database
+    history = fetch_history()
+    if history:
+        # History is ordered descending by created_at, so we reverse it for chronological display
+        for item in reversed(history):
+            if item.get("query"):
+                st.session_state.messages.append({"role": "user", "content": item["query"]})
+            if item.get("reponse"):
+                st.session_state.messages.append({"role": "assistant", "content": item["reponse"]})
 
 # Display chat history
 for msg in st.session_state.messages:
