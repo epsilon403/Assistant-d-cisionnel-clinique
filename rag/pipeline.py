@@ -31,11 +31,13 @@ from rag.ingestion.chunker import chunk_medical_documents
 from rag.embeddings.store import create_vector_store
 from rag.generation.chain import create_medical_rag_chain
 from rag.retrieval.retriever import get_hybrid_retriever
+import mlflow
 
 class RAGPipeline:
     def __init__(self):
         self.chain = None
 
+    @mlflow.trace
     def ingest(self, file_path: str):
         docs = load_medical_document(file_path)
         chunks = chunk_medical_documents(docs)
@@ -48,6 +50,7 @@ class RAGPipeline:
         self.chain = create_medical_rag_chain(retriever)
         return "System ready: Medical knowledge ingested."
 
+    @mlflow.trace
     def ask(self, question: str):
         """Step 2: The 'Answering' Phase"""
         if not self.chain:
